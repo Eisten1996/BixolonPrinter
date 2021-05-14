@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private static BixolonPrinter bxlPrinter = null;
 
-    private Button btnPrinterPrint, btnPrinterPrint2;
+    private Button btnPrinterPrint, btnPrinterPrint2, btnPrinterPrint3;
 
     private int portType = BXLConfigLoader.DEVICE_BUS_USB;
     private String logicalName = BXLConfigLoader.PRODUCT_NAME_BK3_3;
@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnPrinterPrint.setOnClickListener(this);
         btnPrinterPrint2 = findViewById(R.id.btn_print2);
         btnPrinterPrint2.setOnClickListener(this);
+        btnPrinterPrint3 = findViewById(R.id.btn_print3);
+        btnPrinterPrint3.setOnClickListener(this);
 
         bxlPrinter = new BixolonPrinter(getApplicationContext());
 
@@ -67,6 +69,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 printData2();
                 closePrint();
                 break;
+
+            case R.id.btn_print3:
+                openPrint();
+                printData3();
+                closePrint();
+                break;
         }
     }
 
@@ -84,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String data = "";
 
         for (int i = 0; i < 4; i++) {
-            data += getPrinterInstance().setAtrribute(i + 1, i + 1) + text + " " + (i + 1) + "\n";
+            data += getPrinterInstance().setAtrribute(i + 1, i) + text + " " + (i + 1) + "\n";
         }
         System.out.println("data--->" + data);
         getPrinterInstance().printText(data);
@@ -95,12 +103,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String text = "HOLA MUNDO";
         String data;
 
-        for (int i = 0; i < 4; i++) {
-            data = getPrinterInstance().setAtrribute(i + 1, i + 1) + text + " " + (i + 1) + "\n";
+        for (int i = 6; i > 0; i--) {
+            data = getPrinterInstance().setAtrribute(0, i-1) + text + " " + (i + 1) + "\n";
             System.out.println("data--->" + data);
             getPrinterInstance().printText(data);
         }
+        getPrinterInstance().cutPaper();
+    }
 
+    public void printData3() {
+        String text = "HOLA MUNDO";
+        String data;
+        int x;
+        getPrinterInstance().startPageMode();
+        for (int i = 6; i > 0; i--) {
+            data = getPrinterInstance().setAtrribute(0, i-1) + text + " " + (i + 1) + "\n";
+            System.out.println("data--->" + data);
+            x = i;
+            getPrinterInstance().setPageModePosition(x);
+            getPrinterInstance().printText(data);
+        }
+        getPrinterInstance().endPageMode();
         getPrinterInstance().cutPaper();
     }
 

@@ -28,6 +28,12 @@
             android:layout_height="300px"
             android:text="@string/btn_imprimir" />
 
+        <Button
+            android:id="@+id/btn_print3"
+            android:layout_width="match_parent"
+            android:layout_height="300px"
+            android:text="@string/btn_imprimir3" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

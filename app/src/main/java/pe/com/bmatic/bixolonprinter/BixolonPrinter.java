@@ -20,6 +20,9 @@ public class BixolonPrinter {
     private BXLConfigLoader bxlConfigLoader;
     private POSPrinter posPrinter;
 
+    public static int horizontal = 0;
+    public static int vertical = 0;
+
     // ------------------- alignment ------------------- //
     public static int ALIGNMENT_LEFT = 1;
     public static int ALIGNMENT_CENTER = 2;
@@ -47,6 +50,7 @@ public class BixolonPrinter {
                 posPrinter.setCharacterSet(BXLConst.CS_858_EURO);
                 posPrinter.setCharacterEncoding(BXLConst.CE_ASCII);
                 posPrinter.setAsyncMode(isAsyncMode);
+                System.out.println("posPrinter.getRecLineWidth() ---> " + posPrinter.getRecLineWidth());
 
             } catch (JposException e) {
                 e.printStackTrace();
@@ -202,4 +206,66 @@ public class BixolonPrinter {
         }
         return true;
     }
+
+    public boolean startPageMode() {
+        try {
+            if (!posPrinter.getDeviceEnabled()) {
+                return false;
+            }
+            String area = 0 + "," + 0 + "," + 576 + "," + 2000;
+            posPrinter.setPageModePrintArea(area);
+            posPrinter.setPageModePrintDirection(1);
+            posPrinter.pageModePrint(POSPrinterConst.PTR_PM_PAGE_MODE);
+        } catch (JposException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public boolean endPageMode() {
+        try {
+            if (!posPrinter.getDeviceEnabled()) {
+                return false;
+            }
+            posPrinter.pageModePrint(POSPrinterConst.PTR_PM_NORMAL);
+        } catch (JposException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public boolean setPageModePosition(int x) {
+
+        try {
+            if (!posPrinter.getDeviceEnabled()) {
+                return false;
+            }
+            switch (x) {
+                case (0):
+                    vertical += 30;
+                    break;
+                case (1):
+                case (4):
+                case (5):
+                    vertical += 60;
+                    break;
+                case (2):
+                    vertical += 120;
+                    break;
+                case (3):
+                    vertical += 100;
+                    break;
+
+            }
+            posPrinter.setPageModeHorizontalPosition(horizontal);
+            posPrinter.setPageModeVerticalPosition(vertical);
+        } catch (JposException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
 }
