@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">BixolonPrinter</string>
+    <string name="btn_conectar">Conectar</string>
+    <string name="btn_imprimir">Imprimir</string>
+    <string name="btn_desconectar">Desconectar</string>
+</resources>
