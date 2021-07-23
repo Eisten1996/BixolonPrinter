@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void openPrint() {
         long TInit, TEnd, time;
         TInit = System.currentTimeMillis();
-        getPrinterInstance().printerOpen(portType, logicalName, address, true);
+        getPrinterInstance().printerOpen(portType, logicalName, address, false);
         TEnd = System.currentTimeMillis();
         time = TEnd - TInit;
         System.out.println("Tiempo de demora conexion en milisegundos: " + time);
@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         System.out.println("data--->" + data);
         getPrinterInstance().printText(data);
         getPrinterInstance().cutPaper();
+        getPrinterInstance().ejectPaper(3);
     }
 
     public void printData2() {
@@ -102,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         getPrinterInstance().cutPaper();
+        getPrinterInstance().ejectPaper(3);
     }
 
     public void closePrint() {

@@ -202,4 +202,20 @@ public class BixolonPrinter {
         }
         return true;
     }
+
+    public boolean ejectPaper(int mode) {
+        try {
+            if (!posPrinter.getDeviceEnabled()) {
+                return false;
+            }
+
+            posPrinter.ejectPaper(mode);
+        } catch (JposException e) {
+            e.printStackTrace();
+
+            return false;
+        }
+
+        return true;
+    }
 }
