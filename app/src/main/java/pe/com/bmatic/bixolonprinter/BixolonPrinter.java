@@ -12,13 +12,20 @@ import jpos.JposException;
 import jpos.POSPrinter;
 import jpos.POSPrinterConst;
 import jpos.config.JposEntry;
+import jpos.events.ErrorEvent;
+import jpos.events.ErrorListener;
+import jpos.events.OutputCompleteEvent;
+import jpos.events.OutputCompleteListener;
+import jpos.events.StatusUpdateEvent;
+import jpos.events.StatusUpdateListener;
 
-public class BixolonPrinter {
+public class BixolonPrinter implements ErrorListener, OutputCompleteListener, StatusUpdateListener {
 
     private Context context;
 
     private BXLConfigLoader bxlConfigLoader;
     private POSPrinter posPrinter;
+    public static StatusUpdateEvent statusEvent;
 
     // ------------------- alignment ------------------- //
     public static int ALIGNMENT_LEFT = 1;
@@ -29,6 +36,9 @@ public class BixolonPrinter {
         this.context = context;
 
         posPrinter = new POSPrinter(this.context);
+        posPrinter.addErrorListener(this);
+        posPrinter.addOutputCompleteListener(this);
+        posPrinter.addStatusUpdateListener(this);
 
         bxlConfigLoader = new BXLConfigLoader(this.context);
         try {
@@ -41,12 +51,15 @@ public class BixolonPrinter {
     public boolean printerOpen(int portType, String logicalName, String address, boolean isAsyncMode) {
         if (setTargetDevice(portType, logicalName, BXLConfigLoader.DEVICE_CATEGORY_POS_PRINTER, address)) {
             try {
+                System.out.println("ENTRA A OPEN");
                 posPrinter.open(logicalName);
                 posPrinter.claim(5000 * 2);
                 posPrinter.setDeviceEnabled(true);
                 posPrinter.setCharacterSet(BXLConst.CS_858_EURO);
                 posPrinter.setCharacterEncoding(BXLConst.CE_ASCII);
                 posPrinter.setAsyncMode(isAsyncMode);
+                System.out.println(getPresenterStatus());
+                System.out.println("SALE DE OPEN");
 
             } catch (JposException e) {
                 e.printStackTrace();
@@ -210,6 +223,67 @@ public class BixolonPrinter {
             }
 
             posPrinter.ejectPaper(mode);
+        } catch (JposException e) {
+            e.printStackTrace();
+
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public void errorOccurred(ErrorEvent errorEvent) {
+        System.err.println("errorEvent ---> " + errorEvent.getErrorCode());
+    }
+
+    @Override
+    public void outputCompleteOccurred(OutputCompleteEvent outputCompleteEvent) {
+        System.out.println("outputCompleteEvent ---> " + outputCompleteEvent.getOutputID());
+    }
+
+    @Override
+    public void statusUpdateOccurred(StatusUpdateEvent statusUpdateEvent) {
+        statusEvent = statusUpdateEvent;
+        System.out.println("statusUpdateEvent ---> " + statusUpdateEvent.getStatus());
+    }
+
+    public byte getPresenterStatus() {
+        try {
+            if (!posPrinter.getDeviceEnabled()) {
+                return -1;
+            }
+
+            return posPrinter.getPresenterStatus();
+        } catch (JposException e) {
+            e.printStackTrace();
+        }
+
+        return -1;
+    }
+
+    public boolean beginTransactionPrint() {
+        try {
+            if (!posPrinter.getDeviceEnabled()) {
+                return false;
+            }
+            posPrinter.transactionPrint(POSPrinterConst.PTR_S_RECEIPT, POSPrinterConst.PTR_TP_TRANSACTION);
+        } catch (JposException e) {
+            e.printStackTrace();
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean endTransactionPrint() {
+        try {
+            if (!posPrinter.getDeviceEnabled()) {
+                return false;
+            }
+
+            posPrinter.transactionPrint(POSPrinterConst.PTR_S_RECEIPT, POSPrinterConst.PTR_TP_NORMAL);
         } catch (JposException e) {
             e.printStackTrace();
 
