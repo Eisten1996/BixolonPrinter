@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String data = "";
         getPrinterInstance().beginTransactionPrint();
         for (int i = 0; i < 10; i++) {
-            data += text + " " + (i + 1) + "\n";
+            data += getPrinterInstance().setAtrribute(i + 1, i) + text + " " + (i + 1) + "\n";
         }
         System.out.println("data--->" + data);
         getPrinterInstance().printText(data);
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String data;
         getPrinterInstance().beginTransactionPrint();
         for (int i = 0; i < 10; i++) {
-            data = text + " " + (i + 1) + "\n";
+            data = getPrinterInstance().setAtrribute(i + 1, i) + text + " " + (i + 1) + "\n";
             System.out.println("data--->" + data);
             getPrinterInstance().printText(data);
         }
