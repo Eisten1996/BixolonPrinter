@@ -17,21 +17,17 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <Button
-            android:id="@+id/btnPrinterOpen"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/btn_conectar" />
-
-        <Button
             android:id="@+id/btn_print"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/btn_imprimir" />
+            android:layout_height="300px"
+            android:text="@string/btn_imprimir2" />
 
         <Button
-            android:id="@+id/btn_close"
+            android:id="@+id/btn_print2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/btn_desconectar" />
+            android:layout_height="300px"
+            android:text="@string/btn_imprimir" />
+
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

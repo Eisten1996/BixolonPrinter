@@ -16,9 +16,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private static BixolonPrinter bxlPrinter = null;
 
-    private Button btnPrinterOpen;
-    private Button btnPrinterPrint;
-    private Button btnPrinterClose;
+    private Button btnPrinterPrint, btnPrinterPrint2;
 
     private int portType = BXLConfigLoader.DEVICE_BUS_USB;
     private String logicalName = BXLConfigLoader.PRODUCT_NAME_BK3_3;
@@ -29,13 +27,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        btnPrinterOpen = findViewById(R.id.btnPrinterOpen);
-        btnPrinterOpen.setOnClickListener(this);
         btnPrinterPrint = findViewById(R.id.btn_print);
         btnPrinterPrint.setOnClickListener(this);
-        btnPrinterClose = findViewById(R.id.btn_close);
-        btnPrinterClose.setOnClickListener(this);
-
+        btnPrinterPrint2 = findViewById(R.id.btn_print2);
+        btnPrinterPrint2.setOnClickListener(this);
 
         bxlPrinter = new BixolonPrinter(getApplicationContext());
 
@@ -62,27 +57,60 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.btnPrinterOpen:
-                getPrinterInstance().printerOpen(portType, logicalName, address, true);
-                break;
             case R.id.btn_print:
-                String data = "10  \u001CICLogo_bk.jpg\\\\  \u001C20 POLICLINICO METROPOLITAÑO \u001C10  \u001C20FECHA :  25/03/2021 \u001C10  \u001C20 FARMACIA \u001C10  \u001C28 FC3 \u001C10  \u001C10 POR FAVOR, FIRME Y COLOQUE SU NÚMERO DE DNI Y \u001C10 TELÉFONO EN LA RECETA, ANTES DE SER LLAMADO. \u001C10 \u001C## #PRINT.BARCODE81234567  \u001CCP";
-
-
-                getPrinterInstance().printer(data);
-
-
-//                getPrinterInstance().printText("HELLO WORD\n",2,0,1);
-//                getPrinterInstance().posPrinterCheckHealth();
-
-//                printBottomToTop();
-
-//                printPageModeSample();
+                openPrint();
+                printData();
+                closePrint();
                 break;
-            case R.id.btn_close:
-                getPrinterInstance().printerClose();
+            case R.id.btn_print2:
+                openPrint();
+                printData2();
+                closePrint();
                 break;
         }
+    }
+
+    public void openPrint() {
+        long TInit, TEnd, time;
+        TInit = System.currentTimeMillis();
+        getPrinterInstance().printerOpen(portType, logicalName, address, false);
+        TEnd = System.currentTimeMillis();
+        time = TEnd - TInit;
+        System.out.println("Tiempo de demora conexion en milisegundos: " + time);
+    }
+
+    public void printData() {
+        String text = "HOLA MUNDO";
+        String data = "";
+        getPrinterInstance().beginTransactionPrint();
+        for (int i = 0; i < 10; i++) {
+            data += getPrinterInstance().setAtrribute(i + 1, i) + text + " " + (i + 1) + "\n";
+        }
+        System.out.println("data--->" + data);
+        getPrinterInstance().printText(data);
+        getPrinterInstance().endTransactionPrint();
+        getPrinterInstance().cutPaper();
+
+        getPrinterInstance().ejectPaper(3);
+    }
+
+    public void printData2() {
+        String text = "HOLA MUNDO";
+        String data;
+        getPrinterInstance().beginTransactionPrint();
+        for (int i = 0; i < 10; i++) {
+            data = getPrinterInstance().setAtrribute(i + 1, i) + text + " " + (i + 1) + "\n";
+            System.out.println("data--->" + data);
+            getPrinterInstance().printText(data);
+        }
+        getPrinterInstance().endTransactionPrint();
+        getPrinterInstance().cutPaper();
+
+        getPrinterInstance().ejectPaper(3);
+    }
+
+    public void closePrint() {
+        getPrinterInstance().printerClose();
     }
 
     public class AppUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
@@ -94,66 +122,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             System.exit(10);
         }
     }
-
-//    private void printLeftToRight() {
-//        int width = getPrinterInstance().getPrinterMaxWidth();
-//        int x = 5, y = 50;
-//        while (true) {
-//            // Position x, y
-//            getPrinterInstance().setPageModePosition(x, y);
-//            getPrinterInstance().printText("X : " + x + ", Y : " + y, 0, 0, 1);
-//
-//            if (y >= 1250 || x >= width) {
-//                break;
-//            }
-//            System.out.println("X:\t" + x + "Y:\t" + y + "\n");
-//            x += 10;
-//            y += 50;
-//        }
-//    }
-//
-//    private void printBottomToTop() {
-//        int width = getPrinterInstance().getPrinterMaxWidth();
-//        int x = 5, y = 50;
-//        while (true) {
-//            // Position x, y
-//            getPrinterInstance().setPageModePosition(x, y);
-//            getPrinterInstance().printText("X : " + x + ", Y : " + y, 0, 0, 1);
-//
-//            if (y >= width || x >= 1250) {
-//                break;
-//            }
-//
-//            x += 50;
-//            y += 50;
-//        }
-//    }
-//
-//    private void printPageModeSample() {
-//        int xPos = 0, yPos = 0;
-//        int width = getPrinterInstance().getPrinterMaxWidth();
-//        int height = 1300;
-//
-//        getPrinterInstance().beginTransactionPrint();
-//        getPrinterInstance().startPageMode(xPos, yPos, width, height, 2);
-//        int x = 5, y = 50;
-//        while (true) {
-//            // Position x, y
-//            getPrinterInstance().setPageModePosition(x, y);
-//            getPrinterInstance().printText("X : " + x + ", Y : " + y, 0, 0, 1);
-//
-//            if (y >= width || x >= 1250) {
-//                break;
-//            }
-//
-//            x += 50;
-//            y += 50;
-//        }
-//
-//        getPrinterInstance().endPageMode(true);
-//        getPrinterInstance().endTransactionPrint();
-//
-//    }
-
 
 }
