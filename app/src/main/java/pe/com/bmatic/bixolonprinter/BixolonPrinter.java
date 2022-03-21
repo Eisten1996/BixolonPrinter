@@ -58,7 +58,7 @@ public class BixolonPrinter implements ErrorListener, OutputCompleteListener, St
                 posPrinter.setCharacterSet(BXLConst.CS_858_EURO);
                 posPrinter.setCharacterEncoding(BXLConst.CE_ASCII);
                 posPrinter.setAsyncMode(isAsyncMode);
-                System.out.println(getPresenterStatus());
+//                System.out.println(getPresenterStatus());
                 System.out.println("SALE DE OPEN");
 
             } catch (JposException e) {
@@ -82,10 +82,11 @@ public class BixolonPrinter implements ErrorListener, OutputCompleteListener, St
             if (posPrinter.getClaimed()) {
                 posPrinter.setDeviceEnabled(false);
                 posPrinter.close();
+                System.out.println("PRINTERCLOSE");
             }
         } catch (JposException e) {
-            System.out.println("Error -> " + e.getMessage());
-        }
+            System.err.println("Error -> " + e.getMessage());
+        } 
         return true;
     }
 
@@ -118,6 +119,38 @@ public class BixolonPrinter implements ErrorListener, OutputCompleteListener, St
             e.printStackTrace();
             ret = false;
         }
+        return ret;
+    }
+
+    public boolean printImage(Bitmap bitmap, int alignment) {
+        boolean ret = true;
+
+        try {
+            if (!posPrinter.getDeviceEnabled()) {
+                return false;
+            }
+
+            if (alignment == ALIGNMENT_LEFT) {
+                alignment = POSPrinterConst.PTR_BM_LEFT;
+            } else if (alignment == ALIGNMENT_CENTER) {
+                alignment = POSPrinterConst.PTR_BM_CENTER;
+            } else {
+                alignment = POSPrinterConst.PTR_BM_RIGHT;
+            }
+
+            ByteBuffer buffer = ByteBuffer.allocate(4);
+            buffer.put((byte) POSPrinterConst.PTR_S_RECEIPT);
+            buffer.put((byte) 80); // brightness
+            buffer.put((byte) 0x01); // compress
+            buffer.put((byte) 0x00); // dither
+
+            posPrinter.printBitmap(buffer.getInt(0), bitmap, 200, alignment);
+        } catch (JposException e) {
+            System.err.println("ERROR EN PRINTIMAGE");
+
+            ret = false;
+        }
+
         return ret;
     }
 

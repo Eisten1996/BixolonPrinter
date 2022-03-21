@@ -4,19 +4,21 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.bixolon.commonlib.BXLCommonConst;
 import com.bixolon.commonlib.log.LogService;
 import com.bxl.config.editor.BXLConfigLoader;
 
 import java.io.File;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private static final String PATH_IMG = "/sdcard/TicketeraWeb/assets/files/";
 
     private static BixolonPrinter bxlPrinter = null;
 
-    private Button btnPrinterPrint, btnPrinterPrint2;
+    private Button btnPrinterPrint, btnPrinterPrint2, btnPrinterPrint3;
 
     private int portType = BXLConfigLoader.DEVICE_BUS_USB;
     private String logicalName = BXLConfigLoader.PRODUCT_NAME_BK3_3;
@@ -29,8 +31,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         btnPrinterPrint = findViewById(R.id.btn_print);
         btnPrinterPrint.setOnClickListener(this);
-        btnPrinterPrint2 = findViewById(R.id.btn_print2);
-        btnPrinterPrint2.setOnClickListener(this);
 
         bxlPrinter = new BixolonPrinter(getApplicationContext());
 
@@ -62,47 +62,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 printData();
                 closePrint();
                 break;
-            case R.id.btn_print2:
-                openPrint();
-                printData2();
-                closePrint();
-                break;
         }
     }
 
     public void openPrint() {
-        long TInit, TEnd, time;
-        TInit = System.currentTimeMillis();
         getPrinterInstance().printerOpen(portType, logicalName, address, false);
-        TEnd = System.currentTimeMillis();
-        time = TEnd - TInit;
-        System.out.println("Tiempo de demora conexion en milisegundos: " + time);
     }
 
     public void printData() {
-        String text = "HOLA MUNDO";
+        String text = "HELLO WORLD";
         String data = "";
         getPrinterInstance().beginTransactionPrint();
         for (int i = 0; i < 10; i++) {
             data += getPrinterInstance().setAtrribute(i + 1, i) + text + " " + (i + 1) + "\n";
         }
-        System.out.println("data--->" + data);
         getPrinterInstance().printText(data);
-        getPrinterInstance().endTransactionPrint();
-        getPrinterInstance().cutPaper();
-
-        getPrinterInstance().ejectPaper(3);
-    }
-
-    public void printData2() {
-        String text = "HOLA MUNDO";
-        String data;
-        getPrinterInstance().beginTransactionPrint();
-        for (int i = 0; i < 10; i++) {
-            data = getPrinterInstance().setAtrribute(i + 1, i) + text + " " + (i + 1) + "\n";
-            System.out.println("data--->" + data);
-            getPrinterInstance().printText(data);
-        }
         getPrinterInstance().endTransactionPrint();
         getPrinterInstance().cutPaper();
 

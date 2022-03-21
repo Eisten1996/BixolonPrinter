@@ -1,7 +1,4 @@
 <resources>
     <string name="app_name">BixolonPrinter</string>
-    <string name="btn_conectar">Conectar</string>
-    <string name="btn_imprimir">Imprimir Normal</string>
-    <string name="btn_imprimir2">Imprimir con fallas</string>
-    <string name="btn_desconectar">Desconectar</string>
+    <string name="btn_imprimir2">Imprimir</string>
 </resources>

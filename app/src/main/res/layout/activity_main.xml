@@ -22,11 +22,6 @@
             android:layout_height="300px"
             android:text="@string/btn_imprimir2" />
 
-        <Button
-            android:id="@+id/btn_print2"
-            android:layout_width="match_parent"
-            android:layout_height="300px"
-            android:text="@string/btn_imprimir" />
 
     </LinearLayout>
 
