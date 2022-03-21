@@ -82,27 +82,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void printData() {
         String text = "HOLA MUNDO";
         String data = "";
-
-        for (int i = 0; i < 4; i++) {
+        getPrinterInstance().beginTransactionPrint();
+        for (int i = 0; i < 10; i++) {
             data += getPrinterInstance().setAtrribute(i + 1, i) + text + " " + (i + 1) + "\n";
         }
         System.out.println("data--->" + data);
         getPrinterInstance().printText(data);
+        getPrinterInstance().endTransactionPrint();
         getPrinterInstance().cutPaper();
+
         getPrinterInstance().ejectPaper(3);
     }
 
     public void printData2() {
         String text = "HOLA MUNDO";
         String data;
-
-        for (int i = 0; i < 4; i++) {
+        getPrinterInstance().beginTransactionPrint();
+        for (int i = 0; i < 10; i++) {
             data = getPrinterInstance().setAtrribute(i + 1, i) + text + " " + (i + 1) + "\n";
             System.out.println("data--->" + data);
             getPrinterInstance().printText(data);
         }
-
+        getPrinterInstance().endTransactionPrint();
         getPrinterInstance().cutPaper();
+
         getPrinterInstance().ejectPaper(3);
     }
 
